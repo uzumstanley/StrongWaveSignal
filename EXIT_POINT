@@ -1,0 +1,35 @@
+//@version=5
+indicator("GBP/USD Strong Signal Indicator with Exit Points", overlay=true)
+
+// Moving Averages
+fast_length = 9
+slow_length = 21
+fast_ma = ta.sma(close, fast_length)
+slow_ma = ta.sma(close, slow_length)
+
+// RSI
+rsi_length = 14
+rsi_overbought = 70
+rsi_oversold = 30
+rsi_neutral = 50
+rsi = ta.rsi(close, rsi_length)
+
+// MACD
+macd_length = 12
+signal_length = 26
+smoothing = 9
+[macd_line, signal_line, _] = ta.macd(close, macd_length, signal_length, smoothing)
+
+// Buy Condition
+buy_condition = ta.crossover(fast_ma, slow_ma) and rsi < rsi_overbought and macd_line > signal_line
+
+// Sell Condition
+sell_condition = ta.crossunder(fast_ma, slow_ma) and rsi > rsi_oversold and macd_line < signal_line
+
+// Exit Conditions
+exit_buy_condition = ta.crossunder(rsi, rsi_neutral) or sell_condition  // Exit buy if RSI crosses below 50 or a sell signal occurs
+exit_sell_condition = ta.crossover(rsi, rsi_neutral) or buy_condition   // Exit sell if RSI crosses above 50 or a buy signal occurs
+
+// Plotting Buy Signals
+plotshape(series=buy_condition, title="Buy Signal", location=location.belowbar, color=color.green, style=shape.labelup, text="BUY")
+
