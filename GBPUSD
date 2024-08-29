@@ -1,0 +1,22 @@
+//@version=5
+indicator("GBP/USD Strong Signal Indicator", overlay=true)
+
+// Moving Averages
+fast_length = 9
+slow_length = 21
+fast_ma = ta.sma(close, fast_length)
+slow_ma = ta.sma(close, slow_length)
+
+// RSI     
+rsi_length = 14
+rsi_overbought = 70
+rsi_oversold = 30
+rsi = ta.rsi(close, rsi_length)
+
+// MACD
+macd_length = 12
+signal_length = 26
+smoothing = 9
+[macd_line, signal_line, _] = ta.macd(close, macd_length, signal_length, smoothing)
+
+
