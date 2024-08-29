@@ -33,3 +33,23 @@ exit_sell_condition = ta.crossover(rsi, rsi_neutral) or buy_condition   // Exit 
 // Plotting Buy Signals
 plotshape(series=buy_condition, title="Buy Signal", location=location.belowbar, color=color.green, style=shape.labelup, text="BUY")
 
+// Plotting Sell Signals
+plotshape(series=sell_condition, title="Sell Signal", location=location.abovebar, color=color.red, style=shape.labeldown, text="SELL")
+
+// Plotting Exit Signals
+plotshape(series=exit_buy_condition, title="Exit Buy Signal", location=location.abovebar, color=color.orange, style=shape.labeldown, text="EXIT BUY")
+plotshape(series=exit_sell_condition, title="Exit Sell Signal", location=location.belowbar, color=color.blue, style=shape.labelup, text="EXIT SELL")
+
+// Plotting Moving Averages
+plot(fast_ma, title="Fast MA", color=color.blue, linewidth=2)
+plot(slow_ma, title="Slow MA", color=color.orange, linewidth=2)
+
+// Background color for buy/sell zones
+bgcolor(buy_condition ? color.new(color.green, 90) : na, title="Buy Zone", transp=90)
+bgcolor(sell_condition ? color.new(color.red, 90) : na, title="Sell Zone", transp=90)
+
+// Alerts
+alertcondition(buy_condition, title="Buy Alert", message="Buy Signal Detected for GBP/USD")
+alertcondition(sell_condition, title="Sell Alert", message="Sell Signal Detected for GBP/USD")
+alertcondition(exit_buy_condition, title="Exit Buy Alert", message="Exit Buy Signal Detected for GBP/USD")
+alertcondition(exit_sell_condition, title="Exit Sell Alert", message="Exit Sell Signal Detected for GBP/USD")
