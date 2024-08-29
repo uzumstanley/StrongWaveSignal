@@ -19,4 +19,24 @@ signal_length = 26
 smoothing = 9
 [macd_line, signal_line, _] = ta.macd(close, macd_length, signal_length, smoothing)
 
+// Buy Condition
+buy_condition = ta.crossover(fast_ma, slow_ma) and rsi < rsi_overbought and macd_line > signal_line
 
+// Sell Condition
+sell_condition = ta.crossunder(fast_ma, slow_ma) and rsi > rsi_oversold and macd_line < signal_line
+
+// Plotting Signals
+plotshape(series=buy_condition, title="Buy Signal", location=location.belowbar, color=color.green, style=shape.labelup, text="BUY")
+plotshape(series=sell_condition, title="Sell Signal", location=location.abovebar, color=color.red, style=shape.labeldown, text="SELL")
+
+// Plotting Moving Averages
+plot(fast_ma, title="Fast MA", color=color.blue, linewidth=2)
+plot(slow_ma, title="Slow MA", color=color.orange, linewidth=2)
+
+// Background color for buy/sell zones
+bgcolor(buy_condition ? color.new(color.green, 90) : na, title="Buy Zone", transp=90)
+bgcolor(sell_condition ? color.new(color.red, 90) : na, title="Sell Zone", transp=90)
+
+// Alerts
+alertcondition(buy_condition, title="Buy Alert", message="Buy Signal Detected for GBP/USD")
+alertcondition(sell_condition, title="Sell Alert", message="Sell Signal Detected for GBP/USD")
