@@ -1,0 +1,52 @@
+//@version=5
+indicator("GBP/USD Advanced Signal Indicator", overlay=true)
+
+// Moving Averages
+fast_length = 9
+slow_length = 21
+fast_ma = ta.sma(close, fast_length)
+slow_ma = ta.sma(close, slow_length)
+
+// Bollinger Bands
+bb_length = 20
+bb_mult = 2.0
+[bb_upper, bb_middle, bb_lower] = ta.bb(close, bb_length, bb_mult)
+
+// ADX and Directional Indicators
+adx_length = 14
+adx_smoothing = 14  // Smoothing parameter for ADX
+[plus_di, minus_di, adx] = ta.dmi(adx_length, adx_smoothing)  // Unpacking the DMI function output
+
+// Stochastic RSI (manual implementation)
+rsi_length = 14
+stoch_k_period = 3
+stoch_d_period = 3
+rsi = ta.rsi(close, rsi_length)
+stoch_k = ta.sma(ta.stoch(rsi, rsi, rsi, rsi_length), stoch_k_period)
+stoch_d = ta.sma(stoch_k, stoch_d_period)
+
+// Buy Condition
+buy_condition = ta.crossover(fast_ma, slow_ma) and stoch_k < 20 and adx > 25 and plus_di > minus_di and close < bb_lower
+
+// Sell Condition
+sell_condition = ta.crossunder(fast_ma, slow_ma) and stoch_k > 80 and adx > 25 and minus_di > plus_di and close > bb_upper
+
+// Plotting Signals
+plotshape(series=buy_condition, title="Buy Signal", location=location.belowbar, color=color.green, style=shape.labelup, text="BUY")
+plotshape(series=sell_condition, title="Sell Signal", location=location.abovebar, color=color.red, style=shape.labeldown, text="SELL")
+
+// Plotting Moving Averages
+plot(fast_ma, title="Fast MA", color=color.blue, linewidth=2)
+plot(slow_ma, title="Slow MA", color=color.orange, linewidth=2)
+
+// Plotting Bollinger Bands
+plot(bb_upper, title="Bollinger Upper Band", color=color.purple, linewidth=1)
+plot(bb_lower, title="Bollinger Lower Band", color=color.purple, linewidth=1)
+
+// Background color for buy/sell zones
+bgcolor(buy_condition ? color.new(color.green, 90) : na, title="Buy Zone", transp=90)
+bgcolor(sell_condition ? color.new(color.red, 90) : na, title="Sell Zone", transp=90)
+
+// Alerts
+alertcondition(buy_condition, title="Buy Alert", message="Buy Signal Detected for GBP/USD")
+alertcondition(sell_condition, title="Sell Alert", message="Sell Signal Detected for GBP/USD")
