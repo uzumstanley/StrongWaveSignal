@@ -1,0 +1,2 @@
+# StrongWaveSignal
+GBPUSD
