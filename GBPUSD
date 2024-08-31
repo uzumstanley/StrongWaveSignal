@@ -1,7 +1,6 @@
 //@version=5
 indicator("GBP/USD Strong Signal Indicator", overlay=true)
 
-
 // Moving Averages
 fast_length = 9
 slow_length = 21
