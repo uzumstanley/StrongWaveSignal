@@ -7,6 +7,7 @@ slow_length = 21
 fast_ma = ta.sma(close, fast_length)
 slow_ma = ta.sma(close, slow_length)
 
+
 // RSI     
 rsi_length = 14
 rsi_overbought = 70
