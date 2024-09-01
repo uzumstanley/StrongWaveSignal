@@ -40,3 +40,5 @@ bgcolor(sell_condition ? color.new(color.red, 90) : na, title="Sell Zone", trans
 // Alerts
 alertcondition(buy_condition, title="Buy Alert", message="Buy Signal Detected for GBP/USD")
 alertcondition(sell_condition, title="Sell Alert", message="Sell Signal Detected for GBP/USD")
+
+
