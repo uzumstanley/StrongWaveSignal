@@ -42,3 +42,37 @@ alertcondition(buy_condition, title="Buy Alert", message="Buy Signal Detected fo
 alertcondition(sell_condition, title="Sell Alert", message="Sell Signal Detected for GBP/USD")
 
 
+
+
+// NEW STRATEGY
+//@version=5
+strategy("London Open Breakout Strategy", overlay=true, default_qty_type=strategy.percent_of_equity, default_qty_value=10)
+
+// Parameters
+session_start = timestamp(year, month, dayofmonth, 2, 0) // Start of Asian session (example: 02:00 GMT)
+session_end = timestamp(year, month, dayofmonth, 7, 0)   // End of Asian session (example: 07:00 GMT)
+london_open = timestamp(year, month, dayofmonth, 8, 0)   // London open time
+
+// Asian session high and low
+asian_high = request.security(syminfo.tickerid, "1H", ta.highest(high, session_end - session_start))
+asian_low = request.security(syminfo.tickerid, "1H", ta.lowest(low, session_end - session_start))
+
+// Breakout and reversal detection
+breakout = ta.crossunder(close, asian_high) or ta.crossover(close, asian_low)
+reversal = ta.crossover(close, asian_high) or ta.crossunder(close, asian_low)
+
+// Time-based exit
+exit_time = (timenow >= london_open + 60 * 60 * 1000)
+
+// Strategy logic
+if (breakout and reversal)
+    strategy.entry("Breakout Reversal", strategy.short, when=close < asian_high)
+    strategy.exit("Time Stop", "Breakout Reversal", when=exit_time)
+
+// Plotting Asian session high and low
+plot(asian_high, title="Asian Session High", color=color.red, linewidth=2, style=plot.style_line)
+plot(asian_low, title="Asian Session Low", color=color.green, linewidth=2, style=plot.style_line)
+
+// Plotting breakout and reversal markers
+plotshape(series=breakout, location=location.abovebar, color=color.red, style=shape.labelup, title="Breakout")
+plotshape(series=reversal, location=location.belowbar, color=color.green, style=shape.labeldown, title="Reversal")
